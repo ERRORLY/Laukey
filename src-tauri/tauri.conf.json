@@ -1,0 +1,45 @@
+  {
+    "$schema": "https://schema.tauri.app/config/2",
+    "productName": "laukey",
+    "version": "0.1.0",
+    "identifier": "com.lenovo.laukey",
+    "build": {
+      "beforeDevCommand": "npm run dev",
+      "devUrl": "http://localhost:1420",
+      "beforeBuildCommand": "npm run build",
+      "frontendDist": "../dist"
+    },
+    "app": {
+      "windows": [
+        {
+          "title": "Laukey",
+          "width": 1000,
+          "height": 600,
+          "transparent": false,
+          "decorations": true,
+          "resizable": true,
+          "fullscreen": false,
+          "devtools": false
+        }
+      ],
+      "security": {
+        "csp": null
+      }
+    },
+    "bundle": {
+      "active": true,
+      "targets": "all",
+      "icon": [
+        "icons/32x32.png",
+        "icons/128x128.png",
+        "icons/128x128@2x.png",
+        "icons/icon.png",
+        "icons/icon.ico",
+        "icons/laukey.png"
+      ],
+      "publisher": "Errorly",
+      "category": "Productivity",
+      "shortDescription": "A Password Manager",
+      "longDescription": "A modern password manager, with beutiful ui and good security."
+    }
+  }

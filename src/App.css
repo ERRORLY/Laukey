@@ -1,0 +1,11 @@
+@import "tailwindcss";
+:root {
+	--toastify-color-light: #04103B;
+	--toastify-color-dark: #04103B;
+	--toastify-text-color-light: #fff;
+}
+html, body {
+  -webkit-user-select: none; /* Chrome / WebKit */
+  -ms-user-select: none;     /* IE / Edge */
+  user-select: none;         /* Standard */
+}
