@@ -41,7 +41,6 @@ const Laukey = () => {
   const getDB = async () => {
     try {
       const result = await invoke<string>("get_db");
-      console.log("DB content:", result);
 
       // Parse the result and ensure it's an array
       let parsed;
