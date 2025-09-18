@@ -102,6 +102,7 @@ This is the standard file which you get after exporting your file from chrome br
 - [ ] fix notes to note issue
 - [ ] Add app lock with password  
 - [ ] Add dark and light mode toggle  
+- [ ] Use standalone plugin for saving secrets instead of keyring
 ```
 
 ## 📫 Supports

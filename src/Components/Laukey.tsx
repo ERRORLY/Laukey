@@ -128,7 +128,7 @@ const Laukey = () => {
         pw.id === editingPassword.id ? { ...pw, ...formState } : pw
       );
       setPasswords(updated);
-      saveToDB(updated); // ✅ save updated list
+      saveToDB(updated); 
       setEditingPassword(null);
       notify("Password Updated Successfully");
     } else {
@@ -173,8 +173,7 @@ const Laukey = () => {
     setPasswords(updated);
     setShowDeleteModal(false);
     setPasswordToDeleteId(null);
-
-    saveToDB(updated); // ✅ persist the updated array
+    saveToDB(updated); 
     notify("Password has been deleted");
   };
 
