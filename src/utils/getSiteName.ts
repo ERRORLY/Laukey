@@ -13,6 +13,7 @@ interface PasswordEntry {
 export interface SiteInfo {
   name: string;
   url: string;
+  len: number; // amount of passwords
 }
 
 export default async function getSiteName(): Promise<SiteInfo[]> {
@@ -25,6 +26,7 @@ export default async function getSiteName(): Promise<SiteInfo[]> {
         sites.push({
           name: result[i][0].name,
           url: result[i][0].url,
+          len: result[i].length,
         });
       }
     }

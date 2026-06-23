@@ -33,10 +33,11 @@ pub fn encrypt(master_password: &str, plaintext: &str) -> String {
     general_purpose::STANDARD.encode(output)
 }
 
-pub fn decrypt(master_password: &str, encrypted: &str) -> String {
+#[tauri::command]
+pub fn decrypt(master_key: &str, encrypted: &str) -> String {
     let encrypted_bytes = general_purpose::STANDARD.decode(encrypted).unwrap();
 
-    let key = key_from_password(master_password);
+    let key = key_from_password(master_key);
 
     let cipher = Aes256Gcm::new_from_slice(&key).unwrap();
 

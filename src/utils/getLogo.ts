@@ -49,8 +49,7 @@ async function downloadImage(
   try {
     // 1. Fetch the image
     const response = await tauriFetch(imageUrl, { method: "GET" });
-    if (!response.ok)
-      throw new Error(`Failed to fetch image: ${response.status}`);
+    if (!response.ok) console.log("image not found");
 
     const arrayBuffer = await response.arrayBuffer();
     const uint8Array = new Uint8Array(arrayBuffer);
@@ -86,23 +85,30 @@ function extractSiteName(urlText: string): string {
   try {
     const url = new URL(cleaned);
     let hostname = url.hostname.toLowerCase();
-    
+
     // Remove port if any
-    hostname = hostname.split(':')[0];
-    
+    hostname = hostname.split(":")[0];
+
     // Split by '.'
-    const parts = hostname.split('.');
+    const parts = hostname.split(".");
     if (parts.length < 2) {
       return "";
     }
 
     // Common second-level domains/suffixes (like co.uk, com.au, etc.)
     const commonSuffixes = new Set([
-      "co", "com", "org", "net", "gov", "edu", "ac", "mil"
+      "co",
+      "com",
+      "org",
+      "net",
+      "gov",
+      "edu",
+      "ac",
+      "mil",
     ]);
 
     let parentIndex = parts.length - 2;
-    
+
     if (parts.length >= 3) {
       const secondLast = parts[parts.length - 2];
       if (commonSuffixes.has(secondLast)) {
@@ -113,7 +119,7 @@ function extractSiteName(urlText: string): string {
         parentIndex = parts.length - 2;
       }
     }
-    
+
     if (parentIndex >= 0) {
       const parentDomain = parts[parentIndex];
       return parentDomain.charAt(0).toUpperCase() + parentDomain.slice(1);

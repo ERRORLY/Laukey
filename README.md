@@ -10,4 +10,9 @@ This template should help get you started developing with Tauri, React and Types
 ## Todos
 - [] Add a loading 
 - [x] make Passwords Pages
-- [ ] add copy and view of original password
+- [x] decrypt password
+- [x] items show
+- [x] setting
+- [ ] master key
+- [x] delete password
+- [ ] edit password

@@ -6,6 +6,7 @@ use crate::LibLaukey::pass_encrypt::encrypt;
 use dirs::config_dir;
 use rusqlite::Connection;
 use std::fs;
+use tauri::Emitter; // for setting up listener
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct Password {
@@ -124,14 +125,17 @@ pub fn add_passwords(
 }
 
 /// Delete passwords from the db
-pub fn delete_password(name: String, username: String) -> rusqlite::Result<()> {
-    does_db_exists()?;
-    let conn = take_connection()?;
+#[tauri::command]
+pub fn delete_password(app_handle: tauri::AppHandle, name: String, username: String) -> Result<(), String> {
+    does_db_exists().map_err(|e| e.to_string())?;
+    let conn = take_connection().map_err(|e| e.to_string())?;
 
     conn.execute(
         "DELETE FROM passwords WHERE name=(?1) AND username=(?2)",
         (name, username),
-    )?;
+    ).map_err(|e| e.to_string())?;
+
+    app_handle.emit("passwords-changed", ()).map_err(|e| e.to_string())?;
 
     Ok(())
 }
