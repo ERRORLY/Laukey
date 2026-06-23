@@ -18,7 +18,7 @@ crate-type = ["staticlib", "cdylib", "rlib"]
 tauri-build = { version = "2", features = [] }
 
 [dependencies]
-tauri = { version = "2", features = [] }
+tauri = { version = "2", features = ["protocol-asset"] }
 tauri-plugin-opener = "2"
 #lib laukey
 serde = { version = "1", features = ["derive"] }
@@ -31,3 +31,5 @@ aes-gcm = "0.10.3"
 rand = "0.9"
 base64 = "0.22"
 sha2 = "0.11.0"
+tauri-plugin-fs = "2"
+tauri-plugin-http = "2"
