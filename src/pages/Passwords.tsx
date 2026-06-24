@@ -6,6 +6,7 @@ import { exists, BaseDirectory } from "@tauri-apps/plugin-fs";
 import { appDataDir, join } from "@tauri-apps/api/path";
 import { convertFileSrc } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
+import { Key } from "lucide-react";
 
 interface PasswordEntry {
   name: string;
@@ -19,30 +20,46 @@ const Passwords = () => {
   const { name } = useParams();
   const navigate = useNavigate();
   const [logoPath, setLogoPath] = useState(null);
-
+  const [isLoading, setIsLoading] = useState(true);
   const [sitePassword, setSitePassword] = useState<PasswordEntry[]>([]);
 
   useEffect(() => {
     const getLogoPath = async () => {
-      const appData = await appDataDir();
+      try {
+        const appData = await appDataDir();
 
-      const logoName = `${name}.png`;
-      const hasLogoFile = await exists(`logo/${logoName}`, {
-        baseDir: BaseDirectory.AppData,
-      });
-      let logoUrl: string | null = null;
-      if (hasLogoFile) {
-        const logoPath = await join(appData, "logo", logoName);
-        logoUrl = convertFileSrc(logoPath);
+        const logoName = `${name}.png`;
+        const hasLogoFile = await exists(`logo/${logoName}`, {
+          baseDir: BaseDirectory.AppData,
+        });
+        let logoUrl: string | null = null;
+        if (hasLogoFile) {
+          const logoPath = await join(appData, "logo", logoName);
+          logoUrl = convertFileSrc(logoPath);
+        }
+        setLogoPath(logoUrl);
+      } catch (e) {
+        console.log("Error:", e);
       }
-      setLogoPath(logoUrl);
     };
     const fetchPasswords = async () => {
       let passwords = await getSitePasswords(name);
       setSitePassword(passwords);
+      setIsLoading(false);
     };
-    getLogoPath();
-    fetchPasswords();
+
+    const fetchPasswordsAndLogos = async () => {
+      try {
+        await getLogoPath();
+        await fetchPasswords();
+      } catch (e) {
+        console.error("Error", e);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchPasswordsAndLogos();
 
     // for listening from backend
     const unlistenPromise = listen("passwords-changed", () => {
@@ -54,8 +71,18 @@ const Passwords = () => {
     };
   }, [name]);
 
+  if (isLoading)
+    return (
+      <div className="min-h-screen dark:bg-slate-900 flex flex-col items-center justify-center p-12 gap-3 text-slate-400 dark:text-slate-500">
+        <Key className="w-8 h-8 text-[#175ddc] animate-pulse" />
+        <span className="text-xs font-semibold uppercase tracking-wider animate-pulse">
+          Loading vault...
+        </span>
+      </div>
+    );
+
   return (
-    <div className="min-h-screen bg-[#f2f4f7] dark:bg-[#010103] flex flex-col font-sans text-gray-800 dark:text-slate-300 transition-colors duration-200">
+    <div className="min-h-screen bg-[#f2f4f7] dark:bg-[#0b0f19] flex flex-col font-sans text-gray-800 dark:text-slate-300 transition-colors duration-200">
       {/* Header */}
       <header className="bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800/80 shadow-sm sticky top-0 z-10 transition-colors duration-200">
         <div className="w-full mx-auto px-4 h-16 flex items-center justify-between">

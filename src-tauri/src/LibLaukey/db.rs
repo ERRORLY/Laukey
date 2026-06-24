@@ -126,16 +126,72 @@ pub fn add_passwords(
 
 /// Delete passwords from the db
 #[tauri::command]
-pub fn delete_password(app_handle: tauri::AppHandle, name: String, username: String) -> Result<(), String> {
+pub fn delete_password(
+    app_handle: tauri::AppHandle,
+    name: String,
+    username: String,
+) -> Result<(), String> {
     does_db_exists().map_err(|e| e.to_string())?;
     let conn = take_connection().map_err(|e| e.to_string())?;
 
     conn.execute(
         "DELETE FROM passwords WHERE name=(?1) AND username=(?2)",
         (name, username),
-    ).map_err(|e| e.to_string())?;
+    )
+    .map_err(|e| e.to_string())?;
 
-    app_handle.emit("passwords-changed", ()).map_err(|e| e.to_string())?;
+    app_handle
+        .emit("passwords-changed", ())
+        .map_err(|e| e.to_string())?;
+
+    Ok(())
+}
+
+#[tauri::command]
+pub fn update_password(
+    app_handle: tauri::AppHandle,
+    master_key: String,
+    name: String,
+    username: String,
+    updated_name: String,
+    updated_url: String,
+    updated_username: String,
+    updated_password: String,
+    updated_note: String,
+) -> Result<(), String> {
+    let encrypted_pass = encrypt(&master_key, &updated_password);
+
+    let updated_info = Password {
+        name: updated_name,
+        url: updated_url,
+        username: updated_username,
+        password: encrypted_pass,
+        note: updated_note,
+    };
+
+    does_db_exists().map_err(|e| e.to_string())?;
+    let conn = take_connection().map_err(|e| e.to_string())?;
+
+    conn.execute(
+        "UPDATE passwords
+                 SET name = ?1, url = ?2, username = ?3, password = ?4, note = ?5
+                 WHERE name = ?6 AND username = ?7",
+        (
+            &updated_info.name,
+            &updated_info.url,
+            &updated_info.username,
+            &updated_info.password,
+            &updated_info.note,
+            // these two for condition matching
+            &name,
+            &username,
+        ),
+    )
+    .map_err(|e| e.to_string())?;
+
+    app_handle
+        .emit("passwords-changed", ())
+        .map_err(|e| e.to_string())?;
 
     Ok(())
 }

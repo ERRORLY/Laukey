@@ -6,6 +6,7 @@ import { exists, BaseDirectory } from "@tauri-apps/plugin-fs";
 import { appDataDir, join } from "@tauri-apps/api/path";
 import { convertFileSrc } from "@tauri-apps/api/core";
 import SettingsModal from "../components/SettingsModal.tsx";
+import { Key } from "lucide-react";
 
 interface SiteItem {
   name: string;
@@ -15,6 +16,7 @@ interface SiteItem {
 }
 
 const Homepage = () => {
+  const [isLoading, setIsLoading] = useState(true);
   const [siteItems, setSiteItems] = useState<SiteItem[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -22,61 +24,67 @@ const Homepage = () => {
 
   useEffect(() => {
     const fetchSiteNameAndLogo = async () => {
-      const data = await getSiteName(); // [{ name, url }]
-      const appData = await appDataDir();
+      try {
+        const data = await getSiteName(); // [{ name, url }]
+        const appData = await appDataDir();
 
-      // Resolve initial logo URLs (if they exist)
-      const initialItems: SiteItem[] = await Promise.all(
-        data.map(async (site) => {
-          const logoName = `${site.name}.png`;
-          const hasLogoFile = await exists(`logo/${logoName}`, {
-            baseDir: BaseDirectory.AppData,
-          });
-          let logoUrl: string | null = null;
-          if (hasLogoFile) {
-            const logoPath = await join(appData, "logo", logoName);
-            logoUrl = convertFileSrc(logoPath);
-          }
-          return {
-            name: site.name,
-            url: site.url,
-            logoUrl: logoUrl,
-            len: site.len,
-          };
-        }),
-      );
-      setSiteItems(initialItems || []);
-
-      // Trigger background downloads for missing logos
-      data.forEach((site) => {
-        if (!site.url) return;
-        const logoName = `${site.name}.png`;
-        exists(`logo/${logoName}`, { baseDir: BaseDirectory.AppData }).then(
-          (hasLogoFile) => {
-            if (!hasLogoFile) {
-              getLogo(site.url)
-                .then(async () => {
-                  // Verify it exists now
-                  const checkExists = await exists(`logo/${logoName}`, {
-                    baseDir: BaseDirectory.AppData,
-                  });
-                  if (checkExists) {
-                    const logoPath = await join(appData, "logo", logoName);
-                    const logoUrl = convertFileSrc(logoPath);
-                    setSiteItems((prevItems) =>
-                      prevItems.map((item) =>
-                        item.name === site.name ? { ...item, logoUrl } : item,
-                      ),
-                    );
-                  }
-                })
-                .catch((err) => {
-                  console.error("Failed to fetch logo for", site.name, err);
-                });
+        // Resolve initial logo URLs (if they exist)
+        const initialItems: SiteItem[] = await Promise.all(
+          data.map(async (site) => {
+            const logoName = `${site.name}.png`;
+            const hasLogoFile = await exists(`logo/${logoName}`, {
+              baseDir: BaseDirectory.AppData,
+            });
+            let logoUrl: string | null = null;
+            if (hasLogoFile) {
+              const logoPath = await join(appData, "logo", logoName);
+              logoUrl = convertFileSrc(logoPath);
             }
-          },
+            return {
+              name: site.name,
+              url: site.url,
+              logoUrl: logoUrl,
+              len: site.len,
+            };
+          }),
         );
-      });
+        setSiteItems(initialItems || []);
+
+        // Trigger background downloads for missing logos
+        data.forEach((site) => {
+          if (!site.url) return;
+          const logoName = `${site.name}.png`;
+          exists(`logo/${logoName}`, { baseDir: BaseDirectory.AppData }).then(
+            (hasLogoFile) => {
+              if (!hasLogoFile) {
+                getLogo(site.url)
+                  .then(async () => {
+                    // Verify it exists now
+                    const checkExists = await exists(`logo/${logoName}`, {
+                      baseDir: BaseDirectory.AppData,
+                    });
+                    if (checkExists) {
+                      const logoPath = await join(appData, "logo", logoName);
+                      const logoUrl = convertFileSrc(logoPath);
+                      setSiteItems((prevItems) =>
+                        prevItems.map((item) =>
+                          item.name === site.name ? { ...item, logoUrl } : item,
+                        ),
+                      );
+                    }
+                  })
+                  .catch((err) => {
+                    console.error("Failed to fetch logo for", site.name, err);
+                  });
+              }
+            },
+          );
+        });
+      } catch (err) {
+        console.error("Failed to fetch site names and logos:", err);
+      } finally {
+        setIsLoading(false);
+      }
     };
     fetchSiteNameAndLogo();
   }, []);
@@ -196,7 +204,14 @@ const Homepage = () => {
 
         {/* Vault Items List */}
         <div className="bg-white dark:bg-slate-900 rounded-lg border border-gray-200 dark:border-slate-800/80 shadow-sm overflow-hidden transition-colors duration-200">
-          {filteredSiteItems.length === 0 ? (
+          {isLoading ? (
+            <div className="flex flex-col items-center justify-center p-12 gap-3 text-slate-400 dark:text-slate-500">
+              <Key className="w-8 h-8 text-[#175ddc] animate-pulse" />
+              <span className="text-xs font-semibold uppercase tracking-wider animate-pulse">
+                Loading vault...
+              </span>
+            </div>
+          ) : filteredSiteItems.length === 0 ? (
             <div className="p-12 text-center flex flex-col items-center justify-center">
               <div className="bg-gray-50 dark:bg-slate-950 rounded-full p-4 mb-4 text-gray-400 dark:text-slate-500">
                 <svg

@@ -1,8 +1,9 @@
 mod LibLaukey;
 
 pub use LibLaukey::db::add_passwords;
-pub use LibLaukey::db::see_db;
 pub use LibLaukey::db::delete_password;
+pub use LibLaukey::db::see_db;
+pub use LibLaukey::db::update_password;
 pub use LibLaukey::pass_encrypt::decrypt;
 
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
@@ -22,7 +23,8 @@ pub fn run() {
             see_db,
             add_passwords,
             decrypt,
-            delete_password
+            delete_password,
+            update_password
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

@@ -12,6 +12,14 @@ const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
 
   if (!isOpen) return null;
 
+  const handleImportPassword = async () => {
+    return;
+  };
+
+  const handleExportPassword = async () => {
+    return;
+  };
+
   const handleThemeChange = (newTheme: "light" | "dark") => {
     setTheme(newTheme);
     localStorage.setItem("theme", newTheme);
@@ -76,11 +84,34 @@ const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
         </div>
 
         {/* Content */}
-        <div className="p-6 flex flex-col gap-6">
+        <div className="px-6 py-3 flex flex-col gap-6">
           <div>
-            <h3 className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3">
+            <h3 className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider ">
+              Import/Export Passwords
+            </h3>
+            <p className="text-sm text-gray-500 font-light mb-3">
+              Importing or Exporting of Passwords require .csv file
+            </p>
+            <div className="grid grid-cols-2 gap-4 mb-3">
+              <button
+                onClick={handleImportPassword}
+                className="cursor-pointer font-semibold text-md rounded-lg border-2 border-gray-300 dark:border-gray-700 transition hover:border-gray-400 dark:hover:border-gray-800 py-2"
+              >
+                Import
+              </button>
+              <button
+                onClick={handleExportPassword}
+                className="cursor-pointer font-semibold text-md rounded-lg text-white bg-blue-600 transition hover:bg-blue-700 py-2"
+              >
+                Export
+              </button>
+            </div>
+            <h3 className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
               Appearance Theme
             </h3>
+            <p className="text-sm text-gray-500 font-light mb-3">
+              Change the theme of Laukey as you desire
+            </p>
             <div className="grid grid-cols-2 gap-4">
               {/* Light Mode Option */}
               <button

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { invoke } from "@tauri-apps/api/core";
 import Laukey from "../laukey.ts";
 
@@ -18,6 +19,7 @@ interface PasswordsCardProps {
 
 // 3. Destructure 'password' from the props object
 const PasswordsCard = ({ password }: PasswordsCardProps) => {
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [copiedUsername, setCopiedUsername] = useState(false);
   const [copiedPassword, setCopiedPassword] = useState(false);
@@ -54,8 +56,8 @@ const PasswordsCard = ({ password }: PasswordsCardProps) => {
     });
   };
 
-  const handleEdit = async () => {
-    return;
+  const handleEdit = () => {
+    navigate("/add", { state: { password } });
   };
 
   const handleCopy = async (
@@ -96,7 +98,7 @@ const PasswordsCard = ({ password }: PasswordsCardProps) => {
             {/* Action Buttons */}
             <div className="flex justify-end gap-3 px-2 mb-1 border-slate-200/50 dark:border-slate-800/50">
               <button
-                onClick={() => console.log("Edit clicked", password)}
+                onClick={handleEdit}
                 className="cursor-pointer rounded-lg text-slate-500 hover:text-[#175ddc] dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all flex items-center gap-1.5 text-xs font-semibold"
                 title="Edit Entry"
               >
@@ -135,7 +137,7 @@ const PasswordsCard = ({ password }: PasswordsCardProps) => {
               </button>
             </div>
           </div>
-          <div className="flex items-center justify-between bg-white dark:bg-slate-950 border border-blue-100/60 dark:border-slate-800/80 rounded-lg px-3 py-2 hover:border-[#175ddc]/30 dark:hover:border-blue-500/30 hover:shadow-sm transition-all">
+          <div className="flex items-center justify-between bg-white dark:bg-slate-800 border border-blue-100/60 dark:border-slate-800/80 rounded-lg px-3 py-2 hover:border-[#175ddc]/30 dark:hover:border-blue-500/30 hover:shadow-sm transition-all">
             <span className="text-sm font-semibold text-slate-800 dark:text-slate-200 truncate select-all pr-2">
               {password.username}
             </span>
@@ -187,7 +189,7 @@ const PasswordsCard = ({ password }: PasswordsCardProps) => {
             <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
               Password
             </span>
-            <div className="flex items-center justify-between bg-white dark:bg-slate-950 border border-blue-100/60 dark:border-slate-800/80 rounded-lg px-3 py-2 hover:border-[#175ddc]/30 dark:hover:border-blue-500/30 hover:shadow-sm transition-all">
+            <div className="flex items-center justify-between bg-white dark:bg-slate-800 border border-blue-100/60 dark:border-slate-800/80 rounded-lg px-3 py-2 hover:border-[#175ddc]/30 dark:hover:border-blue-500/30 hover:shadow-sm transition-all">
               <span
                 className={`text-sm font-semibold text-slate-800 dark:text-slate-200 truncate pr-2 ${!showPassword ? "tracking-widest text-[9px] select-none font-mono" : "font-mono"}`}
               >
