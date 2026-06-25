@@ -3,10 +3,10 @@
 // delete_password(name, username)     - will remove the password from the db
 
 use crate::LibLaukey::pass_encrypt::encrypt;
-use dirs::config_dir;
 use rusqlite::Connection;
 use std::fs;
 use tauri::Emitter; // for setting up listener
+use directories::ProjectDirs;
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct Password {
@@ -19,11 +19,23 @@ pub struct Password {
 
 /// A very simple way to take connection
 pub fn take_connection() -> rusqlite::Result<Connection> {
-    let mut path = config_dir().expect("Cannot find directory");
-    path.push("er.local.laukey");
-    fs::create_dir_all(&path).expect("Not Able to make Laukey folder");
-    path.push("passwords.db");
-    let conn = Connection::open(&path)?;
+    // 1. Resolve the ProjectDirs using your qualifiers and application name
+    let proj_dirs = ProjectDirs::from("", "", "er.local.laukey")
+        .expect("Cannot determine system home/appdata directory");
+
+    // 2. Change config_dir() to data_dir() to point to ~/.local/share (Linux),
+    //    AppData/Local (Windows), or Application Support (Mac)
+    let path = proj_dirs.data_dir();
+
+    // 3. Ensure the folder exists on disk
+    fs::create_dir_all(path).expect("Not able to create Laukey folder");
+
+    // 4. Target the database file
+    let db_path = path.join("passwords.db");
+
+
+    // 5. Open and return the connection
+    let conn = Connection::open(&db_path)?;
     Ok(conn)
 }
 

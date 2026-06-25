@@ -17,9 +17,8 @@ const loadLogo = async () => {
   imgElement.src = assetUrl;
 };
 
-const getLogo = async (url: string) => {
+const getLogo = async (name: string, url: string) => {
   if (!url) return;
-  const name = extractSiteName(url);
   if (!name) return;
 
   const fileName = `${name}.png`;

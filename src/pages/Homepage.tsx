@@ -6,6 +6,7 @@ import { exists, BaseDirectory } from "@tauri-apps/plugin-fs";
 import { appDataDir, join } from "@tauri-apps/api/path";
 import { convertFileSrc } from "@tauri-apps/api/core";
 import SettingsModal from "../components/SettingsModal.tsx";
+import { listen } from "@tauri-apps/api/event";
 import { Key } from "lucide-react";
 
 interface SiteItem {
@@ -57,7 +58,7 @@ const Homepage = () => {
           exists(`logo/${logoName}`, { baseDir: BaseDirectory.AppData }).then(
             (hasLogoFile) => {
               if (!hasLogoFile) {
-                getLogo(site.url)
+                getLogo(site.name, site.url)
                   .then(async () => {
                     // Verify it exists now
                     const checkExists = await exists(`logo/${logoName}`, {
@@ -87,6 +88,15 @@ const Homepage = () => {
       }
     };
     fetchSiteNameAndLogo();
+
+    // for listening from backend
+    const unlistenPromise = listen("passwords-imported", () => {
+      fetchSiteNameAndLogo();
+    });
+
+    return () => {
+      unlistenPromise.then((unlisten) => unlisten());
+    };
   }, []);
 
   const filteredSiteItems = siteItems.filter((item) =>

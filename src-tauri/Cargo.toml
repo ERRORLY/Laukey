@@ -19,7 +19,6 @@ tauri-build = { version = "2", features = [] }
 
 [dependencies]
 tauri = { version = "2", features = ["protocol-asset"] }
-tauri-plugin-opener = "2"
 #lib laukey
 serde = { version = "1", features = ["derive"] }
 argon2 = "0.5.3"
@@ -33,3 +32,7 @@ base64 = "0.22"
 sha2 = "0.11.0"
 tauri-plugin-fs = "2"
 tauri-plugin-http = "2"
+tauri-plugin-dialog = "2"
+csv = "1"
+directories = "5.0"
+tokio = { version = "1", features = ["full"] }

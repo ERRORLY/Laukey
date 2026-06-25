@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { invoke } from "@tauri-apps/api/core";
+import { open } from "@tauri-apps/plugin-dialog";
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -13,7 +15,30 @@ const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
   if (!isOpen) return null;
 
   const handleImportPassword = async () => {
-    return;
+    try {
+      console.log("Clicked");
+      const selected = await open({
+        multiple: false, // Set to true if you want to allow multiple files
+        directory: false, // We want files, not directories
+        filters: [
+          {
+            name: "CSV Documents",
+            extensions: ["csv"], // Restricts selection to .csv files
+          },
+        ],
+      });
+
+      if (selected != null) {
+        console.log(selected);
+        await invoke("import_pass_from_csv", {
+          masterKey: "Hello",
+          path: selected,
+        });
+        console.log("Done");
+      }
+    } catch (e) {
+      console.error("error:", e);
+    }
   };
 
   const handleExportPassword = async () => {

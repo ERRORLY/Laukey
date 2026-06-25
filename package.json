@@ -12,9 +12,9 @@
   "dependencies": {
     "@tailwindcss/vite": "^4.3.1",
     "@tauri-apps/api": "^2",
+    "@tauri-apps/plugin-dialog": "~2",
     "@tauri-apps/plugin-fs": "~2",
     "@tauri-apps/plugin-http": "~2",
-    "@tauri-apps/plugin-opener": "^2",
     "lucide-react": "^1.21.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",

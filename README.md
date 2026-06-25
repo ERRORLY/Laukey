@@ -14,7 +14,11 @@ This template should help get you started developing with Tauri, React and Types
 - [x] items show
 - [x] setting
 - [ ] master key // will be done at the end
+- [ ] dublicate passwords
+- [ ] password.name
 - [x] delete password
 - [x] edit password
-- [ ] import/export csv
+- [ ] add toast message
+- [x] import csv
+- [ ] export csv
 - [ ] polish the ui
