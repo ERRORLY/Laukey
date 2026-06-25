@@ -1,3 +1,17 @@
 @import "tailwindcss";
 
 @custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --toast-bg: #ffffff;
+  --toast-color: #1e293b;
+  --toast-border: rgba(226, 232, 240, 0.6);
+  --toast-theme-blue: #175ddc;
+}
+
+.dark {
+  --toast-bg: #0f172a;
+  --toast-color: #f1f5f9;
+  --toast-border: rgba(30, 41, 59, 0.8);
+  --toast-theme-blue: #2573ff;
+}

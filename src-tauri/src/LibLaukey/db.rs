@@ -48,7 +48,8 @@ pub fn does_db_exists() -> rusqlite::Result<()> {
             url TEXT NOT NULL,
             username TEXT NOT NULL,
             password TEXT NOT NULL,
-            note TEXT
+            note TEXT,
+            CONSTRAINT unique_name_username UNIQUE (name, username)
         )",
         [],
     )?;
@@ -108,7 +109,7 @@ pub fn add_passwords(
     username: String,
     password: String,
     note: String,
-) -> Result<(), String> {
+) -> Result<bool, String> {
     let encrypted_pass = encrypt(&master_key, &password);
     let password = Password {
         name: name,
@@ -121,8 +122,8 @@ pub fn add_passwords(
     let _ = does_db_exists().map_err(|e| e.to_string())?;
     let conn = take_connection().map_err(|e| e.to_string())?;
 
-    conn.execute(
-        "INSERT INTO passwords (name, url, username, password, note) VALUES (?1, ?2, ?3, ?4, ?5)",
+    let row_affected = conn.execute(
+        "INSERT INTO passwords (name, url, username, password, note) VALUES (?1, ?2, ?3, ?4, ?5) ON CONFLICT (name, username) DO NOTHING;",
         (
             &password.name,
             &password.url,
@@ -133,7 +134,11 @@ pub fn add_passwords(
     )
     .map_err(|e| e.to_string())?;
 
-    Ok(())
+    if row_affected==0 {
+        return Ok(false);
+    }
+
+    Ok(true)
 }
 
 /// Delete passwords from the db
@@ -187,7 +192,10 @@ pub fn update_password(
     conn.execute(
         "UPDATE passwords
                  SET name = ?1, url = ?2, username = ?3, password = ?4, note = ?5
-                 WHERE name = ?6 AND username = ?7",
+                 WHERE name = ?6 AND username = ?7
+                 "
+
+                 ,
         (
             &updated_info.name,
             &updated_info.url,

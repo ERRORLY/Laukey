@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
-import { open } from "@tauri-apps/plugin-dialog";
+import { open, save } from "@tauri-apps/plugin-dialog";
+import { writeTextFile } from "@tauri-apps/plugin-fs";
+import { showToast } from "./Toast.tsx";
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -16,7 +18,6 @@ const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
 
   const handleImportPassword = async () => {
     try {
-      console.log("Clicked");
       const selected = await open({
         multiple: false, // Set to true if you want to allow multiple files
         directory: false, // We want files, not directories
@@ -30,19 +31,48 @@ const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
 
       if (selected != null) {
         console.log(selected);
-        await invoke("import_pass_from_csv", {
+        const result = await invoke<{ imported: number; skipped: number }>("import_pass_from_csv", {
           masterKey: "Hello",
           path: selected,
         });
-        console.log("Done");
+        if (result.skipped > 0) {
+          showToast.success(`Import complete: ${result.imported} imported (${result.skipped} duplicates skipped)`);
+        } else {
+          showToast.success(`Imported ${result.imported} passwords successfully!`);
+        }
       }
     } catch (e) {
       console.error("error:", e);
+      showToast.error("Failed to import passwords");
     }
   };
 
   const handleExportPassword = async () => {
-    return;
+    try {
+      const filePath = await save({
+        filters: [
+          {
+            name: "CSV",
+            extensions: ["csv"],
+          },
+        ],
+        defaultPath: "Laukey Passwords.csv", // Suggested default file name
+      });
+
+      if (!filePath) {
+        console.log("Path not selected");
+        return;
+      }
+      let csvContent = await invoke("export_pass_to_csv", {
+        masterKey: "Hello",
+      });
+
+      await writeTextFile(filePath, csvContent);
+      showToast.success("Passwords exported successfully!");
+    } catch (e) {
+      console.log("Error:", e);
+      showToast.error("Failed to export passwords");
+    }
   };
 
   const handleThemeChange = (newTheme: "light" | "dark") => {
@@ -50,8 +80,10 @@ const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
     localStorage.setItem("theme", newTheme);
     if (newTheme === "dark") {
       document.documentElement.classList.add("dark");
+      showToast.success("Switched to dark theme");
     } else {
       document.documentElement.classList.remove("dark");
+      showToast.success("Switched to light theme");
     }
   };
 

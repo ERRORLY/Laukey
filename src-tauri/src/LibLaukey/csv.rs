@@ -17,8 +17,14 @@ pub struct Password {
     pub note: String,
 }
 
+#[derive(Debug, serde::Serialize)]
+pub struct ImportResult {
+    pub imported: usize,
+    pub skipped: usize,
+}
+
 #[tauri::command]
-pub async fn import_pass_from_csv(app_handle: tauri::AppHandle, master_key: String, path: String) -> Result<(), String> {
+pub async fn import_pass_from_csv(app_handle: tauri::AppHandle, master_key: String, path: String) -> Result<ImportResult, String> {
     // spawn_blocking moves CPU-bound / heavy synchronous I/O off the main thread
     tokio::task::spawn_blocking(move || {
         let mut rdr = csv::Reader::from_path(&path).map_err(|e| e.to_string())?;
@@ -28,17 +34,20 @@ pub async fn import_pass_from_csv(app_handle: tauri::AppHandle, master_key: Stri
         // 1. Start a transaction. This keeps database operations in-memory until committed.
         let tx = conn.transaction().map_err(|e| e.to_string())?;
 
+        let mut imported = 0;
+        let mut skipped = 0;
+
         {
             // Prepare the statement once outside the loop for better performance
             let mut stmt = tx
-                .prepare("INSERT INTO passwords (name, url, username, password, note) VALUES (?1, ?2, ?3, ?4, ?5)")
+                .prepare("INSERT INTO passwords (name, url, username, password, note) VALUES (?1, ?2, ?3, ?4, ?5) ON CONFLICT (name, username) DO NOTHING;")
                 .map_err(|e| e.to_string())?;
 
             for result in rdr.deserialize() {
                 let record: Password = result.map_err(|e| e.to_string())?;
                 let encrypted_pass = encrypt(&master_key, &record.password);
 
-                stmt.execute((
+                let rows_affected = stmt.execute((
                     &record.name,
                     &record.url,
                     &record.username,
@@ -46,6 +55,12 @@ pub async fn import_pass_from_csv(app_handle: tauri::AppHandle, master_key: Stri
                     &record.note,
                 ))
                 .map_err(|e| e.to_string())?;
+
+                if rows_affected == 0 {
+                    skipped += 1;
+                } else {
+                    imported += 1;
+                }
             }
         } // stmt goes out of scope here so we can commit the transaction
 
@@ -55,15 +70,14 @@ pub async fn import_pass_from_csv(app_handle: tauri::AppHandle, master_key: Stri
             .emit("passwords-imported", ())
             .map_err(|e| e.to_string())?;
 
-        Ok(())
+        Ok(ImportResult { imported, skipped })
     })
     .await
     .map_err(|e| e.to_string())?
-
 }
 
 #[tauri::command]
-pub fn export_pass_to_csv(master_key: String) -> Result<(), String> {
+pub fn export_pass_to_csv(master_key: String) -> Result<(String), String> {
     let passwords = see_db().map_err(|e| e.to_string())?;
 
     let mut wtr = csv::Writer::from_writer(vec![]);
@@ -88,7 +102,6 @@ pub fn export_pass_to_csv(master_key: String) -> Result<(), String> {
 
     let csv_content = String::from_utf8(wtr.into_inner().map_err(|e| e.to_string())?)
         .map_err(|e| e.to_string())?;
-    println!("{}", csv_content);
 
-    Ok(())
+    Ok(csv_content)
 }

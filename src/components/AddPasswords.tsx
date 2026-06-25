@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { invoke } from "@tauri-apps/api/core";
 import Laukey from "../laukey.ts";
+import { showToast } from "./Toast.tsx";
 
 const AddPasswords = () => {
   const navigate = useNavigate();
@@ -33,74 +34,27 @@ const AddPasswords = () => {
     decryptPassword();
   }, [editEntry, masterKey]);
 
-  // Helper to extract Site Name from URL using parent domain resolution
+  // Helper to extract Site Name (the whole domain) from URL
   const extractSiteName = (urlText: string): string => {
-    let cleaned = urlText.trim();
+    const cleaned = urlText.trim();
     if (!cleaned) return "";
 
-    // 1. If they are actively typing the protocol, don't try to parse a site name yet
-    if (/^https?(:(\/(\/)?)?)?$/i.test(cleaned)) {
+    const lower = cleaned.toLowerCase();
+    // If it is a partial protocol (prefix of http:// or https://), don't extract anything yet
+    if ("https://".startsWith(lower) || "http://".startsWith(lower)) {
       return "";
     }
 
-    // Prepend protocol if missing so URL parser works
-    if (!/^https?:\/\//i.test(cleaned)) {
-      cleaned = "https://" + cleaned;
-    }
+    // Remove protocol
+    let domainPart = cleaned.replace(/^(https?:\/\/)?/i, "");
 
-    try {
-      const urlObj = new URL(cleaned);
-      let hostname = urlObj.hostname.toLowerCase();
-
-      // Remove port if any
-      hostname = hostname.split(":")[0];
-
-      // Split by '.'
-      const parts = hostname.split(".");
-      if (parts.length < 2) {
-        return "";
-      }
-
-      // Common second-level domains/suffixes
-      const commonSuffixes = new Set([
-        "co",
-        "com",
-        "org",
-        "net",
-        "gov",
-        "edu",
-        "ac",
-        "mil",
-      ]);
-
-      let parentIndex = parts.length - 2;
-
-      if (parts.length >= 3) {
-        const secondLast = parts[parts.length - 2];
-        if (commonSuffixes.has(secondLast)) {
-          parentIndex = parts.length - 3;
-        } else {
-          parentIndex = parts.length - 2;
-        }
-      }
-
-      if (parentIndex >= 0) {
-        const parentDomain = parts[parentIndex];
-        // Make sure we didn't extract empty strings or invalid garbage
-        if (!parentDomain) return "";
-        return parentDomain.charAt(0).toUpperCase() + parentDomain.slice(1);
-      }
-    } catch (e) {
-      // 2. Fixed Fallback Regex: Explicitly handles partial and full protocols safely
-      const match = cleaned.match(/^(?:https?:\/\/)?(?:www\.)?([^\/\s\.:]+)/i);
-      if (match && match[1]) {
-        const found = match[1].toLowerCase();
-        // Double check it's not capturing the protocol itself
-        if (found === "http" || found === "https") {
-          return "";
-        }
-        return found.charAt(0).toUpperCase() + found.slice(1);
-      }
+    // Extract everything up to the first /, ?, #, or :
+    const match = domainPart.match(/^([^\/\?\s:#]+)/);
+    if (match) {
+      let domain = match[1].toLowerCase();
+      // Strip www. prefix for cleaner domain representation
+      domain = domain.replace(/^www\./i, "");
+      return domain;
     }
     return "";
   };
@@ -128,8 +82,9 @@ const AddPasswords = () => {
           updatedPassword: password,
           updatedNote: note.trim(),
         });
+        showToast.success(`Updated credentials for ${finalName}`);
       } else {
-        await invoke("add_passwords", {
+        let success = await invoke("add_passwords", {
           masterKey,
           name: finalName,
           url: url.trim() || `https://${finalName.toLowerCase()}.com`,
@@ -137,10 +92,19 @@ const AddPasswords = () => {
           password,
           note: note.trim(),
         });
+        if (!success) {
+          showToast.error(
+            `Dublicate Password: ${username.trim()} already exists for ${finalName}`,
+          );
+          navigate(-1);
+          return;
+        }
+        showToast.success(`Added credentials for ${finalName}`);
       }
       navigate(-1);
     } catch (err) {
       console.error(err);
+      showToast.error(`Failed to save credentials for ${finalName}`);
     }
   };
 
