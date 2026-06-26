@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { open, save } from "@tauri-apps/plugin-dialog";
 import { writeTextFile } from "@tauri-apps/plugin-fs";
+import { useAppStore } from "../store.ts";
 import { showToast } from "./Toast.tsx";
 
 interface SettingsModalProps {
@@ -13,6 +14,7 @@ const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
   const [theme, setTheme] = useState<"light" | "dark">(() => {
     return (localStorage.getItem("theme") as "light" | "dark") || "light";
   });
+  const { masterKey } = useAppStore();
 
   if (!isOpen) return null;
 
@@ -31,14 +33,21 @@ const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
 
       if (selected != null) {
         console.log(selected);
-        const result = await invoke<{ imported: number; skipped: number }>("import_pass_from_csv", {
-          masterKey: "Hello",
-          path: selected,
-        });
+        const result = await invoke<{ imported: number; skipped: number }>(
+          "import_pass_from_csv",
+          {
+            masterKey: masterKey,
+            path: selected,
+          },
+        );
         if (result.skipped > 0) {
-          showToast.success(`Import complete: ${result.imported} imported (${result.skipped} duplicates skipped)`);
+          showToast.success(
+            `Import complete: ${result.imported} imported (${result.skipped} duplicates skipped)`,
+          );
         } else {
-          showToast.success(`Imported ${result.imported} passwords successfully!`);
+          showToast.success(
+            `Imported ${result.imported} passwords successfully!`,
+          );
         }
       }
     } catch (e) {
@@ -64,7 +73,7 @@ const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
         return;
       }
       let csvContent = await invoke("export_pass_to_csv", {
-        masterKey: "Hello",
+        masterKey: masterKey,
       });
 
       await writeTextFile(filePath, csvContent);
@@ -96,12 +105,12 @@ const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
       />
 
       {/* Modal Content */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/80 rounded-2xl w-full max-w-md shadow-2xl overflow-hidden relative z-10 transform scale-100 transition-all duration-305 flex flex-col animate-[in_0.2s_ease-out]">
+      <div className="bg-white dark:bg-slate-900 theme-border rounded-2xl w-full max-w-md shadow-2xl relative z-10 transform scale-100 transition-all duration-305 flex flex-col animate-[in_0.2s_ease-out] p-6 gap-6">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-800">
+        <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800/60">
           <h2 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
             <svg
-              className="w-5 h-5 text-[#175ddc] dark:text-blue-450"
+              className="w-5 h-5 text-[#175ddc] dark:text-blue-500"
               fill="none"
               stroke="currentColor"
               strokeWidth="2.5"
@@ -122,7 +131,7 @@ const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
           </h2>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-650 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+            className="p-1.5 rounded-xl text-slate-400 hover:text-slate-650 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
           >
             <svg
               className="w-5 h-5"
@@ -140,101 +149,92 @@ const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
           </button>
         </div>
 
-        {/* Content */}
-        <div className="px-6 py-3 flex flex-col gap-6">
-          <div>
-            <h3 className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider ">
-              Import/Export Passwords
-            </h3>
-            <p className="text-sm text-gray-500 font-light mb-3">
-              Importing or Exporting of Passwords require .csv file
-            </p>
-            <div className="grid grid-cols-2 gap-4 mb-3">
-              <button
-                onClick={handleImportPassword}
-                className="cursor-pointer font-semibold text-md rounded-lg border-2 border-gray-300 dark:border-gray-700 transition hover:border-gray-400 dark:hover:border-gray-800 py-2"
-              >
-                Import
-              </button>
-              <button
-                onClick={handleExportPassword}
-                className="cursor-pointer font-semibold text-md rounded-lg text-white bg-blue-600 transition hover:bg-blue-700 py-2"
-              >
-                Export
-              </button>
-            </div>
-            <h3 className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-              Appearance Theme
-            </h3>
-            <p className="text-sm text-gray-500 font-light mb-3">
-              Change the theme of Laukey as you desire
-            </p>
-            <div className="grid grid-cols-2 gap-4">
-              {/* Light Mode Option */}
-              <button
-                onClick={() => handleThemeChange("light")}
-                className={`flex flex-col items-center gap-3 p-4 rounded-xl border-2 transition-all cursor-pointer ${
-                  theme === "light"
-                    ? "border-[#175ddc] bg-blue-50/20 text-[#175ddc] dark:bg-blue-950/10 shadow-sm"
-                    : "border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-600 dark:text-slate-400 hover:border-slate-300 dark:hover:border-slate-700"
-                }`}
-              >
-                <div className="w-12 h-12 rounded-full bg-amber-100 dark:bg-amber-950/30 flex items-center justify-center text-amber-600">
-                  <svg
-                    className="w-6 h-6"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M12 3v2.25m0 13.5V21M4.22 4.22l1.59 1.59m12.38 12.38 1.59 1.59M3 12h2.25m13.5 0H21M5.81 18.19l1.59-1.59m12.38-12.38 1.59-1.59M12 7.5a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9Z"
-                    />
-                  </svg>
-                </div>
-                <span className="font-semibold text-sm">Light Mode</span>
-              </button>
+        {/* Appearance Theme */}
+        <div className="flex flex-col gap-2.5">
+          <h3 className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+            Appearance Theme
+          </h3>
+          <div className="grid grid-cols-2 gap-4">
+            {/* Light Mode Option */}
+            <button
+              onClick={() => handleThemeChange("light")}
+              className={`flex flex-col items-center gap-3 p-4 rounded-2xl border transition-all cursor-pointer ${
+                theme === "light"
+                  ? "border-[#175ddc] bg-blue-50/20 text-[#175ddc] dark:bg-blue-950/10 shadow-xs font-semibold"
+                  : "border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-600 dark:text-slate-400 hover:border-slate-300 dark:hover:border-slate-700"
+              }`}
+            >
+              <div className="w-12 h-12 rounded-xl bg-amber-50 dark:bg-amber-955/10 flex items-center justify-center text-amber-500 border border-amber-200/40 dark:border-amber-900/30">
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 3v2.25m0 13.5V21M4.22 4.22l1.59 1.59m12.38 12.38 1.59 1.59M3 12h2.25m13.5 0H21M5.81 18.19l1.59-1.59m12.38-12.38 1.59-1.59M12 7.5a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9Z"
+                  />
+                </svg>
+              </div>
+              <span className="text-sm">Light Mode</span>
+            </button>
 
-              {/* Dark Mode Option */}
-              <button
-                onClick={() => handleThemeChange("dark")}
-                className={`flex flex-col items-center gap-3 p-4 rounded-xl border-2 transition-all cursor-pointer ${
-                  theme === "dark"
-                    ? "border-[#175ddc] dark:border-blue-500 bg-blue-50/20 dark:bg-blue-950/25 text-[#175ddc] dark:text-blue-400 shadow-sm"
-                    : "border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-600 dark:text-slate-400 hover:border-slate-300 dark:hover:border-slate-700"
-                }`}
-              >
-                <div className="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-700 dark:text-blue-400">
-                  <svg
-                    className="w-6 h-6"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z"
-                    />
-                  </svg>
-                </div>
-                <span className="font-semibold text-sm">Dark Mode</span>
-              </button>
-            </div>
+            {/* Dark Mode Option */}
+            <button
+              onClick={() => handleThemeChange("dark")}
+              className={`flex flex-col items-center gap-3 p-4 rounded-2xl border transition-all cursor-pointer ${
+                theme === "dark"
+                  ? "border-[#175ddc] dark:border-blue-500 bg-blue-50/20 dark:bg-blue-950/25 text-[#175ddc] dark:text-blue-400 shadow-xs font-semibold"
+                  : "border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-600 dark:text-slate-400 hover:border-slate-300 dark:hover:border-slate-700"
+              }`}
+            >
+              <div className="w-12 h-12 rounded-xl bg-slate-50 dark:bg-slate-850 flex items-center justify-center text-slate-600 dark:text-blue-400 border border-slate-200/50 dark:border-slate-800">
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z"
+                  />
+                </svg>
+              </div>
+              <span className="text-sm">Dark Mode</span>
+            </button>
           </div>
         </div>
 
-        {/* Footer */}
-        <div className="px-6 py-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 flex justify-end">
-          <button
-            onClick={onClose}
-            className="cursor-pointer px-5 py-2 bg-[#175ddc] hover:bg-[#114ab8] dark:bg-blue-600 dark:hover:bg-blue-500 text-white rounded-lg text-sm font-semibold transition-colors shadow-sm"
-          >
-            Done
-          </button>
+        {/* Import / Export Section */}
+        <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-1">
+            <h3 className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+              Import/Export Passwords
+            </h3>
+            <p className="text-xs text-gray-500 dark:text-slate-400 leading-normal">
+              Backup your vault or import passwords from a .csv document.
+            </p>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <button
+              onClick={handleImportPassword}
+              className="cursor-pointer font-semibold text-sm rounded-xl border border-gray-300 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 py-2.5 transition-all shadow-xs"
+            >
+              Import CSV
+            </button>
+            <button
+              onClick={handleExportPassword}
+              className="cursor-pointer font-semibold text-sm rounded-xl text-white bg-[#175ddc] hover:bg-[#114ab8] dark:bg-blue-600 dark:hover:bg-blue-500 py-2.5 transition-all shadow-xs"
+            >
+              Export CSV
+            </button>
+          </div>
         </div>
       </div>
     </div>

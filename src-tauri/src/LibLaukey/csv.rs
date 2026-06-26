@@ -2,7 +2,7 @@
 // export_pass_to_csv - will export all the db passwords to csv (do this in frontend, for easy file sharing)
 
 use crate::LibLaukey::{
-    db::{add_passwords, see_db, take_connection, does_db_exists},
+    db::{see_db, take_connection, does_db_exists},
     pass_encrypt::{decrypt, encrypt},
 };
 use tokio;
@@ -77,7 +77,7 @@ pub async fn import_pass_from_csv(app_handle: tauri::AppHandle, master_key: Stri
 }
 
 #[tauri::command]
-pub fn export_pass_to_csv(master_key: String) -> Result<(String), String> {
+pub fn export_pass_to_csv(master_key: String) -> Result<String, String> {
     let passwords = see_db().map_err(|e| e.to_string())?;
 
     let mut wtr = csv::Writer::from_writer(vec![]);

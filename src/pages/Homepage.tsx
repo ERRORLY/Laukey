@@ -8,6 +8,7 @@ import { convertFileSrc } from "@tauri-apps/api/core";
 import SettingsModal from "../components/SettingsModal.tsx";
 import { listen } from "@tauri-apps/api/event";
 import { Key } from "lucide-react";
+import useStore from "../store.ts"; // for masterKey
 
 interface SiteItem {
   name: string;
@@ -106,26 +107,31 @@ const Homepage = () => {
   return (
     <div className="min-h-screen bg-[#f2f4f7] dark:bg-[#0b0f19] flex flex-col font-sans text-gray-800 dark:text-slate-300 transition-colors duration-200">
       {/* Header */}
-      <header className="bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800/80 shadow-sm sticky top-0 z-10 transition-colors duration-200">
-        <div className="w-full mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            {/* Bitwarden-style Logo Icon (Shield with Keyhole) */}
-            <svg
-              className="w-7 h-7 text-[#175ddc]"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-            >
-              <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h-2v4h2v-4zm0-3.5c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5 1.5-.67 1.5-1.5-.67-1.5-1.5-1.5z" />
-            </svg>
-            <span className="text-xl font-bold tracking-tight text-gray-900 dark:text-white flex items-center gap-1.5">
-              Laukey{" "}
+      <header className="bg-white/85 dark:bg-slate-900/85 backdrop-blur-md border-b border-gray-200/50 dark:border-slate-800/50 shadow-xs top-0 z-50 transition-colors duration-200">
+        <div className="max-w-4xl w-full mx-auto px-4 h-16 flex items-center justify-between">
+          <div
+            className="flex items-center gap-2.5 cursor-pointer"
+            onClick={() => navigate("/")}
+          >
+            {/* Shield with Keyhole Icon inside a gradient box */}
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-600 to-[#175ddc] flex items-center justify-center shadow-xs">
+              <svg
+                className="w-5 h-5 text-white"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h-2v4h2v-4zm0-3.5c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5 1.5-.67 1.5-1.5-.67-1.5-1.5-1.5z" />
+              </svg>
+            </div>
+            <span className="text-lg font-bold tracking-tight text-gray-900 dark:text-white">
+              Laukey
             </span>
           </div>
 
           <div className="flex items-center gap-3">
             <button
               onClick={() => navigate("/add")}
-              className="cursor-pointer bg-[#175ddc] hover:bg-[#114ab8] text-white px-4 py-2 rounded text-sm font-semibold flex items-center gap-1.5 transition-colors shadow-sm"
+              className="cursor-pointer bg-gradient-to-r from-blue-600 to-[#175ddc] hover:from-blue-700 hover:to-[#114ab8] text-white px-4 py-1.5 rounded text-sm font-semibold flex items-center gap-1.5 transition-all duration-200 shadow-xs hover:shadow-sm"
             >
               <svg
                 className="w-4 h-4"
@@ -144,9 +150,27 @@ const Homepage = () => {
             </button>
             <button
               onClick={() => setIsSettingsOpen(true)}
-              className="cursor-pointer transition duration-300 hover:rotate-45"
+              className="cursor-pointer group p-2 hover:bg-gray-100 dark:hover:bg-slate-800/80 rounded-lg transition-colors flex items-center justify-center text-gray-500 dark:text-slate-400"
+              title="Settings"
             >
-              <img className="h-8 w-8 dark:invert" src="/logos/settings.png" />
+              <svg
+                className="w-6 h-6 transition-transform duration-500 group-hover:rotate-45"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.43l-1.003.828c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.829a1.125 1.125 0 0 1 .26 1.43l-1.297 2.247a1.125 1.125 0 0 1-1.37.491l-1.216-.456c-.356-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.43l1.004-.829c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.828a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.645-.869L9.59 3.94Z"
+                />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                />
+              </svg>
             </button>
           </div>
         </div>
@@ -246,7 +270,7 @@ const Homepage = () => {
               <p className="text-sm text-gray-500 dark:text-slate-400 mt-1 max-w-sm">
                 {searchQuery
                   ? "Try adjusting your search keywords to find what you're looking for."
-                  : "There are no login items saved in your Laukey vault yet."}
+                  : "There are no login items saved in your Laukey vault yet. Add or Import passwords to proceed"}
               </p>
               {!searchQuery && (
                 <button
@@ -263,17 +287,19 @@ const Homepage = () => {
                 return (
                   <div
                     key={index}
-                    onClick={() => navigate(`/name/${item.name}`)}
+                    onClick={() =>
+                      navigate(`/name/${encodeURIComponent(item.name)}`)
+                    }
                     className="flex items-center justify-between px-6 py-4 hover:bg-slate-50 dark:hover:bg-slate-800/40 cursor-pointer transition-colors group"
                   >
                     <div className="flex items-center gap-4 min-w-0">
                       {/* Logo or Brand Initial Circle Icon */}
                       {item.logoUrl ? (
-                        <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-white dark:bg-slate-950 border border-gray-200 dark:border-slate-800 flex items-center justify-center overflow-hidden shadow-sm">
+                        <div className="flex-shrink-0 w-10 h-10 flex items-center justify-center overflow-hidden">
                           <img
                             src={item.logoUrl}
                             alt={`${item.name} logo`}
-                            className="w-7 h-7 object-contain"
+                            className="w-8 h-8 object-contain rounded"
                             onError={() => {
                               // If image fails to load, remove its logoUrl from state to trigger fallback to generic logo
                               setSiteItems((prevItems) =>

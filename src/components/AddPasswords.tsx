@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { invoke } from "@tauri-apps/api/core";
-import Laukey from "../laukey.ts";
+import { useAppStore } from "../store.ts";
 import { showToast } from "./Toast.tsx";
 
 const AddPasswords = () => {
@@ -14,7 +14,7 @@ const AddPasswords = () => {
   const [username, setUsername] = useState(editEntry?.username || "");
   const [password, setPassword] = useState("");
   const [note, setNote] = useState(editEntry?.note || "");
-  const [masterKey] = useState(Laukey.master_password || "Hello");
+  const { masterKey } = useAppStore();
   const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
@@ -110,7 +110,7 @@ const AddPasswords = () => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-[#f2f4f7] dark:bg-[#0b0f19] text-gray-800 dark:text-white p-4 transition-colors duration-200">
-      <div className="w-full max-w-md bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-xl p-6 shadow-md dark:shadow-xl transition-colors duration-200">
+      <div className="w-full max-w-md bg-white dark:bg-slate-900 border-l-4 border-l-blue-600 border-b-4 border-b-blue-600 dark:border-b-blue-500 dark:border-l-blue-500 rounded-xl p-6 shadow-md dark:shadow-xl transition-colors duration-200">
         <h1 className="text-2xl font-bold mb-6 text-center text-gray-900 dark:text-white">
           {editEntry ? "Edit Password" : "Add Password"}
         </h1>

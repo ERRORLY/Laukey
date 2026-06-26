@@ -20,5 +20,11 @@ This template should help get you started developing with Tauri, React and Types
 - [x] import/export csv
 - [x] add toast message
 - [x] confirmation before deleting
-- [ ] polish the ui
-- [ ] master key // will be done at the end
+- [x] polish the ui
+- [x] master key 
+
+## Post Development
+- [ ] add api for update info
+- [ ] change version
+- [ ] create new logo
+- [ ] build it

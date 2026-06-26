@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { invoke } from "@tauri-apps/api/core";
-import Laukey from "../laukey.ts";
+import { useAppStore } from "../store.ts";
 import { showToast } from "./Toast.tsx";
 
 // 1. Define the structure of a single password entry
@@ -26,6 +26,7 @@ const PasswordsCard = ({ password }: PasswordsCardProps) => {
   const [copiedPassword, setCopiedPassword] = useState(false);
   const [decryptedValue, setDecryptedValue] = useState("");
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const { masterKey } = useAppStore();
 
   const decryptPass = async (master_key: string, text: string) => {
     let password = await invoke("decrypt", {
@@ -41,7 +42,7 @@ const PasswordsCard = ({ password }: PasswordsCardProps) => {
 
   useEffect(() => {
     if (showPassword && password.password) {
-      decryptPass(Laukey.master_password || "Hello", password.password)
+      decryptPass(masterKey, password.password)
         .then((decrypted) => {
           setDecryptedValue(decrypted);
         })
@@ -49,7 +50,7 @@ const PasswordsCard = ({ password }: PasswordsCardProps) => {
           console.error("Failed to decrypt password:", err);
         });
     }
-  }, [showPassword, password.password]);
+  }, [showPassword, password.password, masterKey]);
 
   const handleDelete = () => {
     setShowDeleteConfirm(true);
@@ -81,18 +82,19 @@ const PasswordsCard = ({ password }: PasswordsCardProps) => {
     try {
       let valueToCopy = text;
       if (isEncrypted) {
-        valueToCopy = await decryptPass(
-          Laukey.master_password || "Hello",
-          text,
-        );
+        valueToCopy = await decryptPass(masterKey, text);
       }
       await navigator.clipboard.writeText(valueToCopy);
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
-      showToast.success(`${isEncrypted ? "Password" : "Username"} copied to clipboard`);
+      showToast.success(
+        `${isEncrypted ? "Password" : "Username"} copied to clipboard`,
+      );
     } catch (err) {
       console.error("Failed to copy:", err);
-      showToast.error(`Failed to copy ${isEncrypted ? "password" : "username"}`);
+      showToast.error(
+        `Failed to copy ${isEncrypted ? "password" : "username"}`,
+      );
     }
   };
 
@@ -102,7 +104,7 @@ const PasswordsCard = ({ password }: PasswordsCardProps) => {
 
   return (
     <>
-      <div className="bg-gradient-to-br from-slate-50 to-[#eef4fc] dark:from-slate-950/50 dark:to-slate-950/90 border border-blue-100/70 dark:border-slate-800 border-l-4 dark:border-l-[#2573ff]  border-l-[#175ddc] rounded-xl shadow-sm p-6 w-full hover:shadow-md transition-all duration-200 flex flex-col gap-4">
+      <div className="bg-gradient-to-br from-slate-50 to-[#eef4fc] dark:from-slate-900 dark:to-slate-900/60 theme-border rounded-xl shadow-sm p-6 w-full hover:shadow-md transition-all duration-200 flex flex-col gap-4">
         {/* Fields */}
         <div className="flex flex-col gap-3">
           {/* Username */}
@@ -153,7 +155,7 @@ const PasswordsCard = ({ password }: PasswordsCardProps) => {
                 </button>
               </div>
             </div>
-            <div className="flex items-center justify-between bg-white dark:bg-slate-950 border border-blue-100/60 dark:border-slate-800/80 rounded-lg px-3 py-2 hover:border-[#175ddc]/30 dark:hover:border-blue-500/30 hover:shadow-sm transition-all">
+            <div className="flex items-center justify-between bg-white dark:bg-slate-950/80 border border-blue-100/60 dark:border-slate-800/60 rounded-lg px-3 py-2 hover:border-[#175ddc]/30 dark:hover:border-blue-500/30 hover:shadow-sm transition-all">
               <span className="text-sm font-semibold text-slate-800 dark:text-slate-200 truncate select-all pr-2">
                 {password.username}
               </span>
@@ -186,7 +188,14 @@ const PasswordsCard = ({ password }: PasswordsCardProps) => {
                     strokeWidth="2.2"
                     viewBox="0 0 24 24"
                   >
-                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                    <rect
+                      x="9"
+                      y="9"
+                      width="13"
+                      height="13"
+                      rx="2"
+                      ry="2"
+                    ></rect>
                     <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
                   </svg>
                 )}
@@ -205,7 +214,7 @@ const PasswordsCard = ({ password }: PasswordsCardProps) => {
               <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                 Password
               </span>
-              <div className="flex items-center justify-between bg-white dark:bg-slate-955 dark:bg-slate-950 border border-blue-100/60 dark:border-slate-800/80 rounded-lg px-3 py-2 hover:border-[#175ddc]/30 dark:hover:border-blue-500/30 hover:shadow-sm transition-all">
+              <div className="flex items-center justify-between bg-white dark:bg-slate-950/80 border border-blue-100/60 dark:border-slate-800/60 rounded-lg px-3 py-2 hover:border-[#175ddc]/30 dark:hover:border-blue-500/30 hover:shadow-sm transition-all">
                 <span
                   className={`text-sm font-semibold text-slate-800 dark:text-slate-200 truncate pr-2 ${!showPassword ? "tracking-widest text-[9px] select-none font-mono" : "font-mono"}`}
                 >
@@ -256,7 +265,11 @@ const PasswordsCard = ({ password }: PasswordsCardProps) => {
                   </button>
                   <button
                     onClick={() =>
-                      handleCopy(password.password || "", setCopiedPassword, true)
+                      handleCopy(
+                        password.password || "",
+                        setCopiedPassword,
+                        true,
+                      )
                     }
                     className="p-1.5 text-gray-400 dark:text-slate-550 dark:text-slate-500 hover:text-[#175ddc] dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded transition-all cursor-pointer relative"
                     title="Copy Password"
@@ -333,60 +346,68 @@ const PasswordsCard = ({ password }: PasswordsCardProps) => {
       </div>
 
       {showDeleteConfirm && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-fade-in">
-            {/* Backdrop */}
-            <div
-              className="absolute inset-0 bg-slate-900/40 dark:bg-slate-950/60 backdrop-blur-sm transition-opacity duration-300"
-              onClick={() => setShowDeleteConfirm(false)}
-            />
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-fade-in">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-slate-900/40 dark:bg-slate-950/60 backdrop-blur-sm transition-opacity duration-300"
+            onClick={() => setShowDeleteConfirm(false)}
+          />
 
-            {/* Dialog Card */}
-            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/80 rounded-2xl w-full max-w-sm shadow-2xl overflow-hidden relative z-10 transform scale-100 transition-all duration-200 flex flex-col p-6 animate-[in_0.15s_ease-out] gap-4">
-              <div className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-full bg-rose-50 dark:bg-rose-950/30 flex items-center justify-center text-rose-600 dark:text-rose-450 flex-shrink-0">
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.2"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-                    />
-                  </svg>
-                </div>
-                <div className="flex flex-col gap-1.5 min-w-0">
-                  <h3 className="text-base font-bold text-slate-900 dark:text-white">
-                    Delete Credentials?
-                  </h3>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-                    Are you sure you want to delete the credentials for <span className="font-semibold text-slate-705 dark:text-slate-300 select-all">"{password.username}"</span> at <span className="font-semibold text-slate-705 dark:text-slate-300">{password.name}</span>? This action cannot be undone.
-                  </p>
-                </div>
+          {/* Dialog Card */}
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/80 rounded-2xl w-full max-w-sm shadow-2xl overflow-hidden relative z-10 transform scale-100 transition-all duration-200 flex flex-col p-6 animate-[in_0.15s_ease-out] gap-4">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-full bg-rose-50 dark:bg-rose-950/30 flex items-center justify-center text-rose-600 dark:text-rose-450 flex-shrink-0">
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.2"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                  />
+                </svg>
               </div>
-
-              <div className="flex gap-3 mt-2 justify-end">
-                <button
-                  onClick={() => setShowDeleteConfirm(false)}
-                  className="cursor-pointer px-4 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-750 text-slate-700 dark:text-white rounded-lg text-xs font-semibold transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={confirmDelete}
-                  className="cursor-pointer px-4 py-2 bg-rose-600 hover:bg-rose-700 dark:bg-rose-700 dark:hover:bg-rose-600 text-white rounded-lg text-xs font-semibold transition-colors shadow-sm"
-                >
-                  Delete
-                </button>
+              <div className="flex flex-col gap-1.5 min-w-0">
+                <h3 className="text-base font-bold text-slate-900 dark:text-white">
+                  Delete Credentials?
+                </h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                  Are you sure you want to delete the credentials for{" "}
+                  <span className="font-semibold text-slate-705 dark:text-slate-300 select-all">
+                    "{password.username}"
+                  </span>{" "}
+                  at{" "}
+                  <span className="font-semibold text-slate-705 dark:text-slate-300">
+                    {password.name}
+                  </span>
+                  ? This action cannot be undone.
+                </p>
               </div>
             </div>
+
+            <div className="flex gap-3 mt-2 justify-end">
+              <button
+                onClick={() => setShowDeleteConfirm(false)}
+                className="cursor-pointer px-4 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-750 text-slate-700 dark:text-white rounded-lg text-xs font-semibold transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDelete}
+                className="cursor-pointer px-4 py-2 bg-rose-600 hover:bg-rose-700 dark:bg-rose-700 dark:hover:bg-rose-600 text-white rounded-lg text-xs font-semibold transition-colors shadow-sm"
+              >
+                Delete
+              </button>
+            </div>
           </div>
-        )}
-      </>
-    );
-  };
+        </div>
+      )}
+    </>
+  );
+};
 
 export default PasswordsCard;
