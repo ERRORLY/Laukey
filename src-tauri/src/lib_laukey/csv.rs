@@ -1,7 +1,7 @@
 // import_pass_from_csv - will import every psaswords from csv
 // export_pass_to_csv - will export all the db passwords to csv (do this in frontend, for easy file sharing)
 
-use crate::LibLaukey::{
+use crate::lib_laukey::{
     db::{does_db_exists, see_db, take_connection},
     pass_encrypt::{decrypt, encrypt},
 };

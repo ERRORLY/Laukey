@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { invoke } from "@tauri-apps/api/core";
 import { useAppStore } from "../store.ts";
@@ -98,9 +98,7 @@ const PasswordsCard = ({ password }: PasswordsCardProps) => {
     }
   };
 
-  const displayUrl = password.url
-    ? password.url.replace(/^(https?:\/\/)?(www\.)?/, "")
-    : "";
+
 
   return (
     <>

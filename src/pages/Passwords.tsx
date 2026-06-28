@@ -21,7 +21,7 @@ const Passwords = () => {
   const { name: rawName } = useParams();
   const name = rawName ? decodeURIComponent(rawName) : "";
   const navigate = useNavigate();
-  const [logoPath, setLogoPath] = useState(null);
+  const [logoPath, setLogoPath] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [sitePassword, setSitePassword] = useState<PasswordEntry[]>([]);
 

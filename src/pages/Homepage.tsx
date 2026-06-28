@@ -8,7 +8,6 @@ import { convertFileSrc } from "@tauri-apps/api/core";
 import SettingsModal from "../components/SettingsModal.tsx";
 import { listen } from "@tauri-apps/api/event";
 import { Key } from "lucide-react";
-import useStore from "../store.ts"; // for masterKey
 import checkUpdate from "../utils/checkUpdate.ts";
 
 interface SiteItem {

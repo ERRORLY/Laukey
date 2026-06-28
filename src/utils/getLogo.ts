@@ -72,7 +72,7 @@ async function downloadImage(
   }
 }
 
-function extractSiteName(urlText: string): string {
+function _extractSiteName(urlText: string): string {
   let cleaned = urlText.trim();
   if (!cleaned) return "";
 

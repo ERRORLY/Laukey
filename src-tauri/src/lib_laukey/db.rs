@@ -2,7 +2,7 @@
 // add_password()                       - will add password into db
 // delete_password(name, username)     - will remove the password from the db
 
-use crate::LibLaukey::pass_encrypt::encrypt;
+use crate::lib_laukey::pass_encrypt::encrypt;
 use directories::ProjectDirs;
 use rusqlite::Connection;
 use std::fs;

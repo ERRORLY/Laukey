@@ -8,17 +8,19 @@ import { Toaster } from "react-hot-toast";
 import "./App.css";
 import { HashRouter, Routes, Route } from "react-router-dom";
 import { useEffect } from "react";
+import { applyThemeToWindow } from "./utils/theme.ts";
 
 const App = () => {
   const { isVerified } = useAppStore();
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem("theme") || "light";
+    const savedTheme = (localStorage.getItem("theme") as "light" | "dark") || "light";
     if (savedTheme === "dark") {
       document.documentElement.classList.add("dark");
     } else {
       document.documentElement.classList.remove("dark");
     }
+    applyThemeToWindow(savedTheme);
   }, []);
 
   return (

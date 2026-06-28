@@ -1,16 +1,16 @@
-mod LibLaukey;
+mod lib_laukey;
 
-pub use LibLaukey::csv::export_pass_to_csv;
-pub use LibLaukey::csv::import_pass_from_csv;
-pub use LibLaukey::db::add_passwords;
-pub use LibLaukey::db::delete_password;
-pub use LibLaukey::db::see_db;
-pub use LibLaukey::db::update_password;
-pub use LibLaukey::key::create_master_key;
-pub use LibLaukey::key::has_master_key;
-pub use LibLaukey::key::reset_vault;
-pub use LibLaukey::key::verify_master_key;
-pub use LibLaukey::pass_encrypt::decrypt;
+pub use lib_laukey::csv::export_pass_to_csv;
+pub use lib_laukey::csv::import_pass_from_csv;
+pub use lib_laukey::db::add_passwords;
+pub use lib_laukey::db::delete_password;
+pub use lib_laukey::db::see_db;
+pub use lib_laukey::db::update_password;
+pub use lib_laukey::key::create_master_key;
+pub use lib_laukey::key::has_master_key;
+pub use lib_laukey::key::reset_vault;
+pub use lib_laukey::key::verify_master_key;
+pub use lib_laukey::pass_encrypt::decrypt;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
