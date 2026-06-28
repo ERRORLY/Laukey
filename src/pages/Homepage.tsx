@@ -9,6 +9,7 @@ import SettingsModal from "../components/SettingsModal.tsx";
 import { listen } from "@tauri-apps/api/event";
 import { Key } from "lucide-react";
 import useStore from "../store.ts"; // for masterKey
+import checkUpdate from "../utils/checkUpdate.ts";
 
 interface SiteItem {
   name: string;
@@ -89,6 +90,7 @@ const Homepage = () => {
       }
     };
     fetchSiteNameAndLogo();
+    checkUpdate();
 
     // for listening from backend
     const unlistenPromise = listen("passwords-imported", () => {
@@ -109,19 +111,10 @@ const Homepage = () => {
       {/* Header */}
       <header className="bg-white/85 dark:bg-slate-900/85 backdrop-blur-md border-b border-gray-200/50 dark:border-slate-800/50 shadow-xs top-0 z-50 transition-colors duration-200">
         <div className="max-w-4xl w-full mx-auto px-4 h-16 flex items-center justify-between">
-          <div
-            className="flex items-center gap-2.5 cursor-pointer"
-            onClick={() => navigate("/")}
-          >
+          <div className="flex items-center gap-2.5 cursor-pointer">
             {/* Shield with Keyhole Icon inside a gradient box */}
             <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-600 to-[#175ddc] flex items-center justify-center shadow-xs">
-              <svg
-                className="w-5 h-5 text-white"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-              >
-                <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h-2v4h2v-4zm0-3.5c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5 1.5-.67 1.5-1.5-.67-1.5-1.5-1.5z" />
-              </svg>
+              <img className="" src="/logos/laukey.png" />
             </div>
             <span className="text-lg font-bold tracking-tight text-gray-900 dark:text-white">
               Laukey

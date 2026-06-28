@@ -4,9 +4,9 @@
 //                       to enter before revealing password.
 // is_pass_key_correct - will check pass key if its correct or not
 
+use directories::ProjectDirs;
 use serde::{Deserialize, Serialize};
 use std::fs;
-use directories::ProjectDirs;
 
 use argon2::{
     password_hash::{rand_core::OsRng, PasswordHash, PasswordHasher, PasswordVerifier, SaltString},
@@ -48,7 +48,8 @@ pub fn create_master_key(master_password: String) -> Result<(), String> {
             master_password_hash: password_hash,
         };
 
-        let settings_strings = serde_json::to_string_pretty(&settings).map_err(|e| e.to_string())?;
+        let settings_strings =
+            serde_json::to_string_pretty(&settings).map_err(|e| e.to_string())?;
         fs::write(&key_path, settings_strings).map_err(|e| e.to_string())?;
     } else {
         return Err(format!("Path already exist"));

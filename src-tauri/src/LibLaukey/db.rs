@@ -3,10 +3,10 @@
 // delete_password(name, username)     - will remove the password from the db
 
 use crate::LibLaukey::pass_encrypt::encrypt;
+use directories::ProjectDirs;
 use rusqlite::Connection;
 use std::fs;
 use tauri::Emitter; // for setting up listener
-use directories::ProjectDirs;
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct Password {
@@ -32,7 +32,6 @@ pub fn take_connection() -> rusqlite::Result<Connection> {
 
     // 4. Target the database file
     let db_path = path.join("passwords.db");
-
 
     // 5. Open and return the connection
     let conn = Connection::open(&db_path)?;
@@ -134,7 +133,7 @@ pub fn add_passwords(
     )
     .map_err(|e| e.to_string())?;
 
-    if row_affected==0 {
+    if row_affected == 0 {
         return Ok(false);
     }
 
@@ -193,9 +192,7 @@ pub fn update_password(
         "UPDATE passwords
                  SET name = ?1, url = ?2, username = ?3, password = ?4, note = ?5
                  WHERE name = ?6 AND username = ?7
-                 "
-
-                 ,
+                 ",
         (
             &updated_info.name,
             &updated_info.url,

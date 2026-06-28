@@ -4,6 +4,8 @@ import { open, save } from "@tauri-apps/plugin-dialog";
 import { writeTextFile } from "@tauri-apps/plugin-fs";
 import { useAppStore } from "../store.ts";
 import { showToast } from "./Toast.tsx";
+import { openUrl } from "@tauri-apps/plugin-opener";
+import checkUpdate from "../utils/checkUpdate.ts";
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -14,6 +16,8 @@ const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
   const [theme, setTheme] = useState<"light" | "dark">(() => {
     return (localStorage.getItem("theme") as "light" | "dark") || "light";
   });
+  const [downloadVersion, setDownloadVersion] = useState(false);
+  const [downloadUrl, setDownloadUrl] = useState("");
   const { masterKey } = useAppStore();
 
   if (!isOpen) return null;
@@ -93,6 +97,17 @@ const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
     } else {
       document.documentElement.classList.remove("dark");
       showToast.success("Switched to light theme");
+    }
+  };
+
+  const handleCheckForUpdate = async () => {
+    const newVersion = await checkUpdate();
+    if (newVersion.status) {
+      showToast.success("New Version is available");
+      setDownloadVersion(true);
+      setDownloadUrl(newVersion.downloadUrl);
+    } else {
+      showToast.success("You are already using the Latest Version");
     }
   };
 
@@ -235,6 +250,41 @@ const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
               Export CSV
             </button>
           </div>
+        </div>
+
+        {/* Update Section */}
+        <div className="flex flex-col bg-white dark:bg-slate-900">
+          <div>
+            <h3 className="mb-2 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+              Check for Updates
+            </h3>
+          </div>
+
+          <div className="flex items-center justify-between gap-4">
+            <p className="text-sm text-slate-500 dark:text-slate-400">
+              Check if a newer version of the Laukey is available.
+            </p>
+
+            <button
+              onClick={handleCheckForUpdate}
+              className="cursor-pointer shrink-0 rounded-xl bg-[#175ddc] hover:bg-[#114ab8] dark:bg-blue-600 dark:hover:bg-blue-500 px-12 py-2.5 text-sm font-semibold text-white "
+            >
+              Check Update
+            </button>
+          </div>
+          {downloadVersion ? (
+            <p className="text-sm font-semibold text-slate-600 dark:text-slate-400 text-center mt-2">
+              New Version is Available, Download from{" "}
+              <button
+                className="cursor-pointer text-blue-500 hover:text-blue-600"
+                onClick={() => openUrl(downloadUrl)}
+              >
+                here
+              </button>
+            </p>
+          ) : (
+            <></>
+          )}
         </div>
       </div>
     </div>

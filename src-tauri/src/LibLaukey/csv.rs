@@ -2,11 +2,11 @@
 // export_pass_to_csv - will export all the db passwords to csv (do this in frontend, for easy file sharing)
 
 use crate::LibLaukey::{
-    db::{see_db, take_connection, does_db_exists},
+    db::{does_db_exists, see_db, take_connection},
     pass_encrypt::{decrypt, encrypt},
 };
-use tokio;
 use tauri::Emitter;
+use tokio;
 
 #[derive(Debug, serde::Deserialize)]
 pub struct Password {
@@ -24,7 +24,11 @@ pub struct ImportResult {
 }
 
 #[tauri::command]
-pub async fn import_pass_from_csv(app_handle: tauri::AppHandle, master_key: String, path: String) -> Result<ImportResult, String> {
+pub async fn import_pass_from_csv(
+    app_handle: tauri::AppHandle,
+    master_key: String,
+    path: String,
+) -> Result<ImportResult, String> {
     // spawn_blocking moves CPU-bound / heavy synchronous I/O off the main thread
     tokio::task::spawn_blocking(move || {
         let mut rdr = csv::Reader::from_path(&path).map_err(|e| e.to_string())?;

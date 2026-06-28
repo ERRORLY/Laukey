@@ -142,7 +142,7 @@ const MasterKeyGate = () => {
       <div className="min-h-screen bg-[#f2f4f7] dark:bg-[#0b0f19] flex flex-col items-center justify-center p-12 gap-3 text-slate-400 dark:text-slate-500 transition-colors duration-200">
         <Key className="w-10 h-10 text-[#175ddc] animate-pulse" />
         <span className="text-xs font-semibold uppercase tracking-wider animate-pulse">
-          Securing vault...
+          Loading...
         </span>
       </div>
     );
