@@ -45,7 +45,7 @@ You can install Laukey in any OS, if your OS is not given here, you can make you
 </details>
 
 ## FAQs/Usage
-
+Here are the most common question you might get while using bintoo, but if you have more problem that you wanna get answer for, join the discord server for further support.
 <details>
 <summary>What's the format of the CSV for importing passwords?</summary>
 
