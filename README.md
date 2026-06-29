@@ -10,9 +10,10 @@
   </div>
 </div>
 <br>
-Laukey is a Local first password manager, all the passwords are encrypted and locally store, It support importation of passwords from other services like browser and so does export is also available, It also support dark mode for user who are confortable in that preference.
+    
+Laukey is a **local-first** password manager. All passwords are encrypted and stored locally. It supports **importing passwords** from other services, such as web browsers, and exporting them is also available. Additionally, it offers **dark mode support** for users who prefer that style.
 
-## Screenshots
+## ✨ Screenshots
 
 ![](/images/screenshot/1.png)
 
@@ -29,7 +30,7 @@ Laukey is a Local first password manager, all the passwords are encrypted and lo
 
 </details>
 
-## Installation
+## ✨ Installation
 You can install Laukey in any OS, if your OS is not given here, you can make your own from the source
 <details>
 <summary>For Windows</summary>
@@ -44,7 +45,7 @@ You can install Laukey in any OS, if your OS is not given here, you can make you
   From Source
 </details>
 
-## FAQs/Usage
+## ✨ FAQs/Usage
 Here are the most common question you might get while using bintoo, but if you have more problem that you wanna get answer for, join the discord server for further support.
 <details>
 <summary>What's the format of the CSV for importing passwords?</summary>
@@ -67,7 +68,5 @@ If you forget your master password, your encrypted passwords **cannot be recover
 
 </details>
 
-## Contributing
+## ✨ Contributing
 Contributions, bug reports, and feature requests are welcome. Feel free to open an issue or submit a pull request.
-## License
-This project is licensed under the GPL License.
