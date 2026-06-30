@@ -63,7 +63,7 @@ cat <<EOF > "$DESKTOP_FILE"
 Name=$APP_NAME
 Comment=A Local Password Manager
 Exec=$BIN_DIR/$APPIMAGE_FILE
-Icon=${APP_NAME// /_}
+Icon=$ICON_DIR/$ICON_FILE
 Type=Application
 Categories=Utility;
 Terminal=false
