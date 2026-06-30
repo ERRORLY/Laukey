@@ -38,7 +38,12 @@ You can install Laukey in any OS, if your OS is not given here, you can make you
 </details>
 <details>
 <summary>For Linux</summary>
-  Linux
+For most of the User, just run this in your cli, and it will setup the appimage of Laukey
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/ERRORLY/Laukey/refs/heads/main/scripts/linux-install.sh | bash
+```
+But if you need other method to install such as debian packages or .rpm, check out the [release](https://github.com/ERRORLY/Laukey/releases/tag/v0.2) section
 </details>
 <details>
 <summary>From Source</summary>

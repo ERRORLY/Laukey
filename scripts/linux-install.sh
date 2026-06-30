@@ -3,8 +3,8 @@
 # ==========================================
 # CONFIGURATION
 # ==========================================
-APPIMAGE_URL="https://github.com/ERRORLY/bintoo-website/releases/download/1.1.0/Bintoo_1.1.0_amd64.AppImage"
-ICON_URL="https://raw.githubusercontent.com/ERRORLY/bintoo-website/main/static/bintoo-logo.png"
+APPIMAGE_URL="https://github.com/ERRORLY/Laukey/releases/download/v0.2/Laukey_0.2.0_amd64.AppImage"
+ICON_URL="https://github.com/ERRORLY/Laukey/blob/main/images/laukey-logo.png"
 APP_NAME="Laukey"
 APPIMAGE_FILE="Laukey.AppImage"
 ICON_FILE="Laukey.png"
