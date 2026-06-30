@@ -4,7 +4,7 @@
 # CONFIGURATION
 # ==========================================
 APPIMAGE_URL="https://github.com/ERRORLY/Laukey/releases/download/v0.2/Laukey_0.2.0_amd64.AppImage"
-ICON_URL="https://github.com/ERRORLY/Laukey/blob/main/images/laukey-logo.png"
+ICON_URL="https://github.com/ERRORLY/Laukey/blob/main/images/laukey-logo.png?raw=true"
 APP_NAME="Laukey"
 APPIMAGE_FILE="Laukey.AppImage"
 ICON_FILE="Laukey.png"
