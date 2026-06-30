@@ -31,14 +31,16 @@ Laukey is a **local-first** password manager. All passwords are encrypted and st
 </details>
 
 ## ✨ Installation
-You can install Laukey in any OS, if your OS is not given here, you can make your own from the source
+You can install Laukey in any OS, if your OS is not given here, you can make your own from the source, for other methods to setup Laukey, check out our [release](https://github.com/ERRORLY/Laukey/releases/tag/v0.2) section
 <details>
 <summary>For Windows</summary>
   windows
 </details>
 <details>
 <summary>For Linux</summary>
-For most of the User, just run this in your cli, and it will setup the appimage of Laukey
+<br>
+  
+For most of the User, just run this in your terminal, and it will **setup the appimage of Laukey**
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/ERRORLY/Laukey/refs/heads/main/scripts/linux-install.sh | bash
@@ -51,27 +53,7 @@ But if you need other method to install such as debian packages or .rpm, check o
 </details>
 
 ## ✨ FAQs/Usage
-Here are the most common question you might get while using bintoo, but if you have more problem that you wanna get answer for, join the discord server for further support.
-<details>
-<summary>What's the format of the CSV for importing passwords?</summary>
-
-The CSV should look like this:
-
-```csv
-name,url,username,password,note
-"My Site","https://example.com","user123","mypassword",""
-````
-
-This is the default format exported by most modern browsers and many password managers.
-
-</details>
-
-<details>
-<summary>What if I forget my Master Password?</summary>
-
-If you forget your master password, your encrypted passwords **cannot be recovered**. You will still be able to view unencrypted information such as website names, usernames, URLs, and notes, but the stored passwords cannot be decrypted without the correct master password.
-
-</details>
+checkout the [website](https://errorly.github.io/Laukey) for info related this.
 
 ## ✨ Contributing
 Contributions, bug reports, and feature requests are welcome. Feel free to open an issue or submit a pull request.
