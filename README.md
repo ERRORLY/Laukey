@@ -37,8 +37,6 @@ Laukey is available for **Windows**, **Linux**, and can also be built **from sou
 
 For additional installation methods (such as **`.deb`**, **`.rpm`**, and other packages), visit the [Releases](https://github.com/ERRORLY/Laukey/releases/tag/v0.2) page.
 
----
-
 <details>
 <summary><strong>🪟 Windows</strong></summary>
 
@@ -52,8 +50,6 @@ Need a different package? Check the [Releases](https://github.com/ERRORLY/Laukey
 
 </details>
 
----
-
 <details>
 <summary><strong>🐧 Linux</strong></summary>
 
@@ -66,8 +62,6 @@ curl -fsSL https://raw.githubusercontent.com/ERRORLY/Laukey/refs/heads/main/scri
 If you prefer a different installation method (such as **`.deb`** or **`.rpm`** packages), you'll find them on the [Releases](https://github.com/ERRORLY/Laukey/releases/tag/v0.2) page.
 
 </details>
-
----
 
 <details>
 <summary><strong>🛠️ Build from Source</strong></summary>
