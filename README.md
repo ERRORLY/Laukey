@@ -32,37 +32,63 @@ Laukey is a **local-first** password manager. All passwords are encrypted and st
 </details>
 
 ## ✨ Installation
-You can install Laukey in any OS, if your OS is not given here, you can make your own from the source, for other methods to setup Laukey, check out our [release](https://github.com/ERRORLY/Laukey/releases/tag/v0.2) section
-<details>
-<summary>For Windows</summary>
-Here is the Setup file:
-[Laukey Setup](https://github.com/ERRORLY/Laukey/releases/download/v0.2/Laukey_0.2.0_x64_en-US.msi)
 
-If you need other methods to install, such as debian packages or .rpm, check out the [release](https://github.com/ERRORLY/Laukey/releases/tag/v0.2) section
-</details>
+Laukey is available for **Windows**, **Linux**, and can also be built **from source**. If your operating system isn't listed below, you can compile it yourself by following the **From Source** instructions.
+
+For additional installation methods (such as **`.deb`**, **`.rpm`**, and other packages), visit the [Releases](https://github.com/ERRORLY/Laukey/releases/tag/v0.2) page.
+
+---
+
 <details>
-<summary>For Linux</summary>
-<br>
-  
-For most of the User, just run this in your terminal, and it will **setup the appimage of Laukey**
+<summary><strong>🪟 Windows</strong></summary>
+
+### Installer
+
+Download the latest Windows installer:
+
+➡️ **[Laukey Setup (.msi)](https://github.com/ERRORLY/Laukey/releases/download/v0.2/Laukey_0.2.0_x64_en-US.msi)**
+
+Need a different package? Check the [Releases](https://github.com/ERRORLY/Laukey/releases/tag/v0.2) page for all available installation options.
+
+</details>
+
+---
+
+<details>
+<summary><strong>🐧 Linux</strong></summary>
+
+For most users, the easiest way to install Laukey is by running the following command in your terminal. It will automatically download and set up the **AppImage** version.
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/ERRORLY/Laukey/refs/heads/main/scripts/linux-install.sh | bash
 ```
-But if you need other methods to install, such as debian packages or .rpm, check out the [release](https://github.com/ERRORLY/Laukey/releases/tag/v0.2) section
-</details>
-<details>
-<summary>From Source</summary>
-To compile or customize the application on your own machine, execute these commands:
 
-```bash 
+If you prefer a different installation method (such as **`.deb`** or **`.rpm`** packages), you'll find them on the [Releases](https://github.com/ERRORLY/Laukey/releases/tag/v0.2) page.
+
+</details>
+
+---
+
+<details>
+<summary><strong>🛠️ Build from Source</strong></summary>
+
+If you'd like to compile Laukey yourself or customize the source code, run the following commands:
+
+```bash
 git clone https://github.com/ERRORLY/Laukey.git
 cd Laukey
 npm install
 npm run tauri build
 ```
-After that go to `src-tauri/target/bundle/release` and you will find your Executables of Laukey
+
+Once the build is complete, you'll find the generated executables in:
+
+```text
+src-tauri/target/bundle/release
+```
+
 </details>
+
 
 ## ✨ FAQs/Usage
 checkout the [website](https://errorly.github.io/Laukey) for faqs
