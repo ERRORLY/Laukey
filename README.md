@@ -46,7 +46,7 @@ For additional installation methods (such as **`.deb`**, **`.rpm`**, and other p
 
 Download the latest Windows installer:
 
-➡️ **[Laukey Setup (.msi)](https://github.com/ERRORLY/Laukey/releases/download/v0.2/Laukey_0.2.0_x64_en-US.msi)**
+**[Laukey Setup (.msi)](https://github.com/ERRORLY/Laukey/releases/download/v0.2/Laukey_0.2.0_x64_en-US.msi)**
 
 Need a different package? Check the [Releases](https://github.com/ERRORLY/Laukey/releases/tag/v0.2) page for all available installation options.
 
