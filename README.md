@@ -35,7 +35,7 @@ Laukey is a **local-first** password manager. All passwords are encrypted and st
 You can install Laukey in any OS, if your OS is not given here, you can make your own from the source, for other methods to setup Laukey, check out our [release](https://github.com/ERRORLY/Laukey/releases/tag/v0.2) section
 <details>
 <summary>For Windows</summary>
-
+Here is the Setup file:
 [Laukey Setup](https://github.com/ERRORLY/Laukey/releases/download/v0.2/Laukey_0.2.0_x64_en-US.msi)
 
 If you need other methods to install, such as debian packages or .rpm, check out the [release](https://github.com/ERRORLY/Laukey/releases/tag/v0.2) section
@@ -59,7 +59,7 @@ To compile or customize the application on your own machine, execute these comma
 git clone https://github.com/ERRORLY/Laukey.git
 cd Laukey
 npm install
-npm run tauri build</pre></code>
+npm run tauri build
 ```
 After that go to `src-tauri/target/bundle/release` and you will find your Executables of Laukey
 </details>
