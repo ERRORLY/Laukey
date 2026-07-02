@@ -22,11 +22,12 @@ Laukey is a **local-first** password manager. All passwords are encrypted and st
 
 <br>
 
-![](/images/screenshot/2.png)
+![](/images/screenshot/3.png)
 
 <hr>
 
-![](/images/screenshot/3.png)
+![](/images/screenshot/2.png)
+
 
 </details>
 
@@ -34,7 +35,10 @@ Laukey is a **local-first** password manager. All passwords are encrypted and st
 You can install Laukey in any OS, if your OS is not given here, you can make your own from the source, for other methods to setup Laukey, check out our [release](https://github.com/ERRORLY/Laukey/releases/tag/v0.2) section
 <details>
 <summary>For Windows</summary>
-  windows
+
+[Laukey Setup](https://github.com/ERRORLY/Laukey/releases/download/v0.2/Laukey_0.2.0_x64_en-US.msi)
+
+If you need other methods to install, such as debian packages or .rpm, check out the [release](https://github.com/ERRORLY/Laukey/releases/tag/v0.2) section
 </details>
 <details>
 <summary>For Linux</summary>
@@ -45,15 +49,23 @@ For most of the User, just run this in your terminal, and it will **setup the ap
 ```bash
 curl -fsSL https://raw.githubusercontent.com/ERRORLY/Laukey/refs/heads/main/scripts/linux-install.sh | bash
 ```
-But if you need other method to install such as debian packages or .rpm, check out the [release](https://github.com/ERRORLY/Laukey/releases/tag/v0.2) section
+But if you need other methods to install, such as debian packages or .rpm, check out the [release](https://github.com/ERRORLY/Laukey/releases/tag/v0.2) section
 </details>
 <details>
 <summary>From Source</summary>
-  From Source
+To compile or customize the application on your own machine, execute these commands:
+
+```bash 
+git clone https://github.com/ERRORLY/Laukey.git
+cd Laukey
+npm install
+npm run tauri build</pre></code>
+```
+After that go to `src-tauri/target/bundle/release` and you will find your Executables of Laukey
 </details>
 
 ## ✨ FAQs/Usage
-checkout the [website](https://errorly.github.io/Laukey) for info related this.
+checkout the [website](https://errorly.github.io/Laukey) for faqs
 
 ## ✨ Contributing
 Contributions, bug reports, and feature requests are welcome. Feel free to open an issue or submit a pull request.
